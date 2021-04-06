@@ -9,16 +9,50 @@
 
 // Dependencies
 const http = require('http')
+const https = require('https')
 const { URL, URLSearchParams } = require('url')
 const util = require('util')
 const StringDecoder = require('string_decoder').StringDecoder
 const config = require('./config')
+const fs = require('fs')
 
-// Server should respond to all requests with a string
-const server = http.createServer((req, res) => {
+// Instantiating the http server
+const httpServer = http.createServer((req, res) => {
+  unifiedServer(req, res, 'http')
+})
+
+// Start the server
+httpServer.listen(config.httpPort, () => {
+  console.log(
+    `Listening on ${config.httpPort}. Environment is in ${config.envName} mode`
+  )
+})
+
+const httpsServerOptions = {
+  key: fs.readFileSync('./https/key.pem'),
+  cert: fs.readFileSync('./https/cert.pem')
+}
+
+// Instantiate the https server
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+  unifiedServer(req, res, 'https')
+})
+
+// Start the https server
+httpsServer.listen(config.httpsPort, () => {
+  console.log(
+    `Listening on ${config.httpsPort}. Environment is in ${config.envName} mode`
+  )
+})
+
+// make a BaseUrl
+const spitBaseUrl = (protocol, host) => `${protocol}://${host}/`
+
+// All the server logic for both the http and https server
+const unifiedServer = (req, res, protocol) => {
   // get the url and parse it
-  const parsedUrl = new URL(req.url, 'http://localhost:3000')
-
+  const parsedUrl = new URL(req.url, spitBaseUrl(protocol, req.headers.host))
+  console.log(spitBaseUrl(protocol, req.headers.host))
   // get the path
   const path = parsedUrl.pathname
 
@@ -80,14 +114,7 @@ const server = http.createServer((req, res) => {
       console.log(`𝌮 Returning this response: ${statusCode}${payloadString}`)
     })
   })
-})
-
-// Start the server
-server.listen(config.port, () => {
-  console.log(
-    `Listening on ${config.port}. Environment is in ${config.envName} mode`
-  )
-})
+}
 
 // Define handlers
 const handlers = {}
