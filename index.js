@@ -5,8 +5,6 @@
  *
  */
 
-// @TODO: refactor to use ES Modules vs CommonJS
-
 // Dependencies
 const http = require('http')
 const https = require('https')
@@ -15,13 +13,16 @@ const util = require('util')
 const StringDecoder = require('string_decoder').StringDecoder
 const config = require('./config')
 const fs = require('fs')
-const _data = require('./lib/data')
 
-// TESTING
 // @TODO delete this
-_data.create('test', 'newFile', { foo: 'bar' }, (err) => {
-  console.log('We have an error: ', err)
-})
+// TESTING
+//const _data = require('./lib/data')
+//_data.create('test', 'newFile', { foo: 'bar' }, (err) => {
+//  console.log('We have an error: ', err)
+//})
+//_data.read('test', 'newfile', (err, data) => console.log({ err, data }))
+//_data.update('test', 'newFile', { fizz: 'buzz' }, (err) => console.log(err))
+//_data.delete('test', 'newFile', (err) => console.log(err))
 
 // Instantiating the http server
 const httpServer = http.createServer((req, res) => {
