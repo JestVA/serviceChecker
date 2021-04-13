@@ -15,6 +15,13 @@ const util = require('util')
 const StringDecoder = require('string_decoder').StringDecoder
 const config = require('./config')
 const fs = require('fs')
+const _data = require('./lib/data')
+
+// TESTING
+// @TODO delete this
+_data.create('test', 'newFile', { foo: 'bar' }, (err) => {
+  console.log('We have an error: ', err)
+})
 
 // Instantiating the http server
 const httpServer = http.createServer((req, res) => {
@@ -132,7 +139,13 @@ handlers.notFound = (data, callback) => {
   callback(404)
 }
 
+// Ping handler
+handlers.ping = (data, callback) => {
+  callback(200, { message: 'pong' })
+}
+
 // Define a request router
 const router = {
-  sample: handlers.sample
+  sample: handlers.sample,
+  ping: handlers.ping
 }
